@@ -2,34 +2,26 @@
 using AppHotel.Domain.Entities;
 using AppHotel.Domain.ApplicationServiceContracts;
 using AppHotel.Domain.DTOs;
+using AutoMapper;
 
 namespace AppHotel.Application.Services
 {
     public class HotelService : IHotelService
     {
         private readonly IBaseRepository<Hotel> _baseRepository;
+        private readonly IMapper _mapper;
 
-        public HotelService(IBaseRepository<Hotel> baseRepository)
+        public HotelService(IBaseRepository<Hotel> baseRepository, IMapper mapper)
         {
             _baseRepository = baseRepository;
+            _mapper = mapper;
         }
 
         public async Task<HotelOutDTO> CreateHotel(HotelInDTO hotelInDTO)
         {
-            Hotel hotel = new()
-            {
-                Location = hotelInDTO.Location,
-                Name = hotelInDTO.Name,
-                Available = hotelInDTO.Available
-            };
+            Hotel hotel = _mapper.Map<Hotel>(hotelInDTO);
             await _baseRepository.AddAsync(hotel);
-            HotelOutDTO hotelOutDTO = new()
-            {
-                Id = hotel.Id,
-                Location = hotel.Location,
-                Name = hotel.Name,
-                Available = hotel.Available
-            };
+            HotelOutDTO hotelOutDTO = _mapper.Map<HotelOutDTO>(hotel);
             return hotelOutDTO;
         }
     }

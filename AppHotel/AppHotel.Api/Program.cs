@@ -1,9 +1,6 @@
 using AppHotel.Api.Settings;
-using AppHotel.Domain.ApplicationServiceContracts;
-using AppHotel.Application.Services;
-using AppHotel.Domain.RepositoryContracts;
-using AppHotel.Infraestructure.Repository;
-using AppHotel.Infraestructure.Configuration;
+using AppHotel.Infraestructure.Extensions;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,13 +12,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<Database>(builder.Configuration.GetSection("Database"));
+builder.Services.AddServices();
 
-//Services
-builder.Services.AddScoped<IHotelService, HotelService>();
-
-//Repositories
-builder.Services.AddScoped<PersistenceContext>();
-builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+builder.Services.AddAutoMapper(Assembly.Load("AppHotel.ApplicationService"));
 
 var app = builder.Build();
 
@@ -31,6 +24,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.AddMiddleware();
 
 app.UseHttpsRedirection();
 
