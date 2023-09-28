@@ -7,5 +7,7 @@ namespace AppHotel.Domain.ApplicationServiceContracts
         Task<RoomOutDTO> CreateRoom(RoomInDTO roomInDTO);
 
         Task<RoomOutDTO> UpdateRoom(string? id, RoomInUpdateDTO roomInUpdateDTO);
+
+        Task<RoomOutDTO> UpdateAvailabilityRoom(string? id, bool Available);
     }
 }

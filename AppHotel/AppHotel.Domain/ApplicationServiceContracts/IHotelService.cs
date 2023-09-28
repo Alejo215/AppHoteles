@@ -7,5 +7,9 @@ namespace AppHotel.Domain.ApplicationServiceContracts
         Task<HotelOutDTO> CreateHotel(HotelInDTO hotelInDTO);
 
         Task<HotelOutDTO> GetHotelById(string? hotelId);
+
+        Task<HotelOutDTO> UpdateHotel(string? id, HotelInUpdateDTO hotelInUpdateDTO);
+
+        Task<HotelOutDTO> UpdateAvailabilityHotel(string? id, bool Available);
     }
 }

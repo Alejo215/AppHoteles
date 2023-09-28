@@ -1,4 +1,5 @@
 ﻿using AppHotel.ApplicationService.Exceptions;
+using AppHotel.ApplicationService.Services;
 using AppHotel.Domain.ApplicationServiceContracts;
 using AppHotel.Domain.DTOs;
 using FluentValidation;
@@ -22,21 +23,6 @@ namespace AppHotel.Api.Controllers
             _validator = validator;
         }
 
-        // GET: api/<RoomController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<RoomController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<RoomController>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -51,7 +37,6 @@ namespace AppHotel.Api.Controllers
             return Ok(result);
         }
 
-        // PUT api/<RoomController>/5
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -67,10 +52,15 @@ namespace AppHotel.Api.Controllers
             return Ok(result);
         }
 
-        // DELETE api/<RoomController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPatch]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Route("{id}")]
+        public async Task<IActionResult> Patch(string? id, [FromQuery] bool Available)
         {
+            RoomOutDTO result = await _roomService.UpdateAvailabilityRoom(id, Available);
+            return Ok(result);
         }
     }
 }

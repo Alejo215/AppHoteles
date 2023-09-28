@@ -32,16 +32,22 @@ namespace AppHotel.ApplicationService.Services
 
         public async Task<RoomOutDTO> UpdateRoom(string? id, RoomInUpdateDTO roomInUpdateDTO)
         {
-            Room? room = (await _baseRepository.GetByAsync(x => x.Id == id)).FirstOrDefault();
-
-            if(room == null)
-                throw new NotFoundApplicationException("La habitación no existe");
-
+            Room? room = (await _baseRepository.GetByAsync(x => x.Id == id)).FirstOrDefault() ?? throw new NotFoundApplicationException("La habitación no existe");
             _ = await _hotelService.GetHotelById(roomInUpdateDTO.HotelId);
 
             Room roomUpdated = _mapper.Map<Room>(roomInUpdateDTO);
             await _baseRepository.UpdateAsync(roomUpdated, id);
             RoomOutDTO roomOutDTO = _mapper.Map<RoomOutDTO>(roomUpdated);
+            return roomOutDTO;
+        }
+
+        public async Task<RoomOutDTO> UpdateAvailabilityRoom(string? id, bool Available)
+        {
+            Room? room = (await _baseRepository.GetByAsync(x => x.Id == id)).FirstOrDefault() ?? throw new NotFoundApplicationException("La habitación no existe");
+
+            room.Available = Available;
+            await _baseRepository.UpdateAsync(room, id);
+            RoomOutDTO roomOutDTO = _mapper.Map<RoomOutDTO>(room);
             return roomOutDTO;
         }
     }
