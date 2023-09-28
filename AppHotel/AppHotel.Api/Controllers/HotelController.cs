@@ -24,15 +24,11 @@ namespace AppHotel.Api.Controllers
             _validator = validator;
         }
 
-        // GET: api/<HotelController>
+        // GET: api/<RoomController>
         [HttpGet]
-        public async Task<Hotel> Get()
+        public IEnumerable<string> Get()
         {
-            MongoClient mongoClient = new MongoClient("mongodb://localhost:27017");
-            var mongoDatabase = mongoClient.GetDatabase("AppHotel");
-            var hotelCollection = mongoDatabase.GetCollection<Hotel>("Hotel");
-            Hotel hotel = await hotelCollection.Find( x => x.Id == "650f2bc67fe5a04fe468bcc6").FirstOrDefaultAsync();
-            return hotel;
+            return new string[] { "value1", "value2" };
         }
 
         // GET api/<HotelController>/5
@@ -63,9 +59,15 @@ namespace AppHotel.Api.Controllers
         }
 
         // DELETE api/<HotelController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete(string? id)
         {
+            HotelOutDTO result = await _hotelService.DeleteHotel(id);
+            return Ok(result);
         }
     }
 }

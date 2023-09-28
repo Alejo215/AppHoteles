@@ -1,5 +1,5 @@
 ﻿using AppHotel.Domain.ApplicationServiceContracts;
-using AppHotel.Application.Services;
+using AppHotel.ApplicationService.Services;
 using AppHotel.Domain.RepositoryContracts;
 using AppHotel.Infraestructure.Repository;
 using AppHotel.Infraestructure.Configuration;
@@ -16,6 +16,7 @@ namespace AppHotel.Infraestructure.Extensions
         {
             //Services
             services.AddScoped<IHotelService, HotelService>();
+            services.AddScoped<IRoomService, RoomService>();
 
             //Repositories
             services.AddScoped<PersistenceContext>();
@@ -23,6 +24,7 @@ namespace AppHotel.Infraestructure.Extensions
 
             //Validators
             services.AddScoped<IValidator<HotelInDTO>, HotelInValidator>();
+            services.AddScoped<IValidator<RoomInDTO>, RoomInValidator>();
 
             return services;
         }

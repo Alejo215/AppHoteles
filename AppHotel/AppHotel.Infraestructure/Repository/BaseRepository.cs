@@ -22,12 +22,25 @@ namespace AppHotel.Infraestructure.Repository
 
         public async Task<List<T>> GetByAsync(Expression<Func<T, bool>> filter)
         {
-            return await _entities.Find(filter).ToListAsync();
+            return (await _entities.FindAsync(filter)).ToList();
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity, string? id = null)
         {
+            if (entity.Id == null)
+                entity.Id = id;
+
             await _entities.ReplaceOneAsync(x => x.Id == entity.Id, entity);
+        }
+
+        public async Task<T> DeleteByAsync(string? id)
+        {
+            return await _entities.FindOneAndDeleteAsync(id);
+        }
+
+        public async Task<long> DeleteManyByAsync(Expression<Func<T, bool>> filter)
+        {
+            return (await _entities.DeleteManyAsync(filter)).DeletedCount;
         }
     }
 }
