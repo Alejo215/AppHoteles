@@ -37,19 +37,5 @@ namespace AppHotel.ApplicationService.Services
             HotelOutDTO hotelOutDTO = _mapper.Map<HotelOutDTO>(hotel);
             return hotelOutDTO;
         }
-
-        public async Task<HotelOutDTO> DeleteHotel(string? hotelId)
-        {
-            _ = await GetHotelById(hotelId);
-
-            _ = await _roomService.DeleteManyRooms(hotelId);
-
-            Hotel hotel = await _baseRepository.DeleteByAsync(hotelId);
-            if (hotel == null)
-                throw new NotFoundApplicationException("El hotel no existe");
-
-            HotelOutDTO hotelOutDTO = _mapper.Map<HotelOutDTO>(hotel);
-            return hotelOutDTO;
-        }
     }
 }

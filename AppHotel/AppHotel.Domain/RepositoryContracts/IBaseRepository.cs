@@ -9,9 +9,5 @@ namespace AppHotel.Domain.RepositoryContracts
         Task UpdateAsync(T entity, string? id = null);
 
         Task<List<T>> GetByAsync(Expression<Func<T, bool>> filter);
-
-        Task<T> DeleteByAsync(string? id);
-
-        Task<long> DeleteManyByAsync(Expression<Func<T, bool>> filter);
     }
 }

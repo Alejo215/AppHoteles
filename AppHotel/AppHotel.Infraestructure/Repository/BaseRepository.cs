@@ -32,15 +32,5 @@ namespace AppHotel.Infraestructure.Repository
 
             await _entities.ReplaceOneAsync(x => x.Id == entity.Id, entity);
         }
-
-        public async Task<T> DeleteByAsync(string? id)
-        {
-            return await _entities.FindOneAndDeleteAsync(id);
-        }
-
-        public async Task<long> DeleteManyByAsync(Expression<Func<T, bool>> filter)
-        {
-            return (await _entities.DeleteManyAsync(filter)).DeletedCount;
-        }
     }
 }

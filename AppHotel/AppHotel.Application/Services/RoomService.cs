@@ -44,10 +44,5 @@ namespace AppHotel.ApplicationService.Services
             RoomOutDTO roomOutDTO = _mapper.Map<RoomOutDTO>(roomUpdated);
             return roomOutDTO;
         }
-
-        public async Task<long> DeleteManyRooms(string? id)
-        {
-            return await _baseRepository.DeleteManyByAsync(x => x.HotelId == id);
-        }
     }
 }

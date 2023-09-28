@@ -57,17 +57,5 @@ namespace AppHotel.Api.Controllers
         public void Put(int id, [FromBody] string value)
         {
         }
-
-        // DELETE api/<HotelController>/5
-        [HttpDelete]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [Route("{id}")]
-        public async Task<IActionResult> Delete(string? id)
-        {
-            HotelOutDTO result = await _hotelService.DeleteHotel(id);
-            return Ok(result);
-        }
     }
 }
