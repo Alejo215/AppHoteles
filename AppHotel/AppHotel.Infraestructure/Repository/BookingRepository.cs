@@ -56,9 +56,9 @@ namespace AppHotel.Infraestructure.Repository
             return booking;
         }
 
-        public async Task<List<Booking>> GetDetail(string? idBooking)
+        public async Task<List<Booking?>> GetDetail(string? idBooking)
         {
-            var bookingAux = (await this.GetAll()
+            var bookingDataTask = this.GetAll()
                 .Where(x => x.Id == idBooking)
                 .GroupJoin(
                     _baseRepositoryGuest.GetAll(),
@@ -69,21 +69,27 @@ namespace AppHotel.Infraestructure.Repository
                         booking,
                         guests
                     })
-                .ToListAsync());
+                .ToListAsync();
 
-            var guestBookingAux = bookingAux.SelectMany(
-                x => x.guests.DefaultIfEmpty(),
-                (booking, guest) => new
-                {
-                    booking.booking,
-                    guest,
-                    emergencyContact = _baseRepositoryEmergencyContact
-                        .GetAll()
-                        .FirstOrDefault(ec => ec.BookingId == booking.booking.Id)
-                })
-                .ToList();
+            var emergencyContactsTask = _baseRepositoryEmergencyContact.GetAll()
+                .Where(ec => ec.BookingId == idBooking)
+                .ToListAsync();
 
-            var booking = guestBookingAux.GroupBy(x => x.booking)
+            await Task.WhenAll(bookingDataTask, emergencyContactsTask);
+
+            var  bookingData = bookingDataTask.Result;
+            var emergencyContacts = emergencyContactsTask.Result;
+
+            var combinedBookingData = bookingData
+                .SelectMany(
+                    x => x.guests.DefaultIfEmpty(),
+                    (booking, guest) => new
+                    {
+                        booking.booking,
+                        guest,
+                        emergencyContact = emergencyContacts.FirstOrDefault(ec => ec.BookingId == booking.booking.Id)
+                    })
+                .GroupBy(x => x.booking)
                 .Select(x =>
                 {
                     var bookingItem = x.Key;
@@ -91,7 +97,7 @@ namespace AppHotel.Infraestructure.Repository
                     if (bookingItem != null)
                     {
                         bookingItem.EmergencyContact = x.Select(y => y.emergencyContact).FirstOrDefault(z => z != null && z.BookingId == bookingItem.Id);
-                        bookingItem.ListGuest = x.Select(y => y.guest).Where(y => y != null && y.BookingId == bookingItem.Id).ToList();
+                        bookingItem.ListGuest = x.Select(y => y.guest).Where(y => y != null && y.BookingId == bookingItem.Id).ToList()!;
                     }
 
                     return bookingItem;
@@ -99,7 +105,7 @@ namespace AppHotel.Infraestructure.Repository
                 .Where(x => x != null)
                 .ToList();
 
-            return booking;
+            return combinedBookingData;
         }
 
         public async Task<List<BookingAvailableOutDTO>> GetAvailableBookings(BookingAvailableInDTO bookingAvailableInDTO)

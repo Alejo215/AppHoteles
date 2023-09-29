@@ -40,7 +40,7 @@ namespace AppHotel.ApplicationService.Services
 
         public async Task<List<BookingDetailDTO>> GetDetail(string? idBooking)
         {
-            List<Booking> listBooking = await _baseRepository.GetDetail(idBooking);
+            List<Booking?> listBooking = await _baseRepository.GetDetail(idBooking);
             if (listBooking.Count == 0)
                 throw new NotFoundApplicationException("No existe ninguna reserva");
 

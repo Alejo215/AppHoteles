@@ -7,7 +7,7 @@ namespace AppHotel.Domain.RepositoryContracts
     {
         Task<List<Booking>> GetBookingByIdHotel(string? idHotel);
 
-        Task<List<Booking>> GetDetail(string? idBooking);
+        Task<List<Booking?>> GetDetail(string? idBooking);
 
         Task<List<BookingAvailableOutDTO>> GetAvailableBookings(BookingAvailableInDTO bookingAvailableInDTO);
     }
