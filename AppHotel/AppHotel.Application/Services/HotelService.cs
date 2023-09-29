@@ -10,13 +10,11 @@ namespace AppHotel.ApplicationService.Services
     public class HotelService : IHotelService
     {
         private readonly IBaseRepository<Hotel> _baseRepository;
-        private readonly IRoomService _roomService;
         private readonly IMapper _mapper;
 
-        public HotelService(IBaseRepository<Hotel> baseRepository, IRoomService roomService, IMapper mapper)
+        public HotelService(IBaseRepository<Hotel> baseRepository, IMapper mapper)
         {
             _baseRepository = baseRepository;
-            _roomService = roomService;
             _mapper = mapper;
         }
 

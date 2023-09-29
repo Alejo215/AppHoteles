@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using MongoDB.Driver.Linq;
+using System.Linq.Expressions;
 
 namespace AppHotel.Domain.RepositoryContracts
 {
@@ -9,5 +10,7 @@ namespace AppHotel.Domain.RepositoryContracts
         Task UpdateAsync(T entity, string? id = null);
 
         Task<List<T>> GetByAsync(Expression<Func<T, bool>> filter);
+
+        IMongoQueryable<T> GetAll();
     }
 }

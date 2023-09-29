@@ -6,6 +6,7 @@ namespace AppHotel.Domain.Entities
     public class EmergencyContact : BaseDocument
     {
         [BsonElement("bookingId")]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string? BookingId { get; set; }
 
         [BsonElement("name")]

@@ -1,4 +1,6 @@
-﻿namespace AppHotel.Domain.DTOs
+﻿using AppHotel.Domain.Entities;
+
+namespace AppHotel.Domain.DTOs
 {
     public class RoomOutDTO
     {
@@ -11,5 +13,6 @@
         public string TypeRoom { get; set; } = null!;
         public string Location { get; set; } = null!;
         public int NumberPeople { get; set; }
+        public Hotel? Hotel{ get; set; }
     }
 }

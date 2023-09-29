@@ -1,12 +1,9 @@
-﻿using AppHotel.ApplicationService.Exceptions;
-using AppHotel.ApplicationService.Services;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using AppHotel.ApplicationService.Exceptions;
 using AppHotel.Domain.ApplicationServiceContracts;
 using AppHotel.Domain.DTOs;
-using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace AppHotel.Api.Controllers
 {

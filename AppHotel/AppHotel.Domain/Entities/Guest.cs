@@ -6,6 +6,7 @@ namespace AppHotel.Domain.Entities
     public class Guest : BaseDocument
     {
         [BsonElement("bookingId")]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string? BookingId { get; set; }
 
         [BsonElement("name")]
@@ -14,11 +15,11 @@ namespace AppHotel.Domain.Entities
         [BsonElement("lastName")]
         public string LastName { get; set; } = null!;
 
-        [BsonElement("genderId")]
-        public string? GenderId { get; set; }
+        [BsonElement("gender")]
+        public string Gender { get; set; } = null!;
 
-        [BsonElement("documentTypeId")]
-        public string? DocumentTypeId { get; set; }
+        [BsonElement("documentType")]
+        public string? DocumentType { get; set; }
 
         [BsonElement("document")]
         public string Document { get; set; } = null!;

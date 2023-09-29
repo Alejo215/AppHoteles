@@ -6,6 +6,7 @@ namespace AppHotel.Domain.Entities
     public class Room : BaseDocument
     {
         [BsonElement("hotelId")]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string? HotelId { get; set; }
 
         [BsonElement("number")]
@@ -28,5 +29,7 @@ namespace AppHotel.Domain.Entities
 
         [BsonElement("numberPeople")]
         public int NumberPeople { get; set; }
+
+        public Hotel? Hotel { get; set; }
     }
 }

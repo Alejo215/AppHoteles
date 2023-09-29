@@ -2,6 +2,7 @@
 using AppHotel.Domain.RepositoryContracts;
 using AppHotel.Infraestructure.Configuration;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using System.Linq.Expressions;
 
 namespace AppHotel.Infraestructure.Repository
@@ -23,6 +24,11 @@ namespace AppHotel.Infraestructure.Repository
         public async Task<List<T>> GetByAsync(Expression<Func<T, bool>> filter)
         {
             return (await _entities.FindAsync(filter)).ToList();
+        }
+
+        public IMongoQueryable<T> GetAll()
+        {
+             return _entities.AsQueryable();
         }
 
         public async Task UpdateAsync(T entity, string? id = null)

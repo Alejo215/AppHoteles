@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
 using AppHotel.Domain.DTOs;
 using AppHotel.Domain.Validators;
+using AppHotel.Domain.Entities;
 
 namespace AppHotel.Infraestructure.Extensions
 {
@@ -17,14 +18,17 @@ namespace AppHotel.Infraestructure.Extensions
             //Services
             services.AddScoped<IHotelService, HotelService>();
             services.AddScoped<IRoomService, RoomService>();
+            services.AddScoped<IBookingService, BookingService>();
 
             //Repositories
             services.AddScoped<PersistenceContext>();
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped(typeof(IBookingRepository), typeof(BookingRepository));
 
             //Validators
             services.AddScoped<IValidator<HotelInDTO>, HotelInValidator>();
             services.AddScoped<IValidator<RoomInDTO>, RoomInValidator>();
+            services.AddScoped<IValidator<BookingInDTO>, BookingInValidator>();
 
             return services;
         }
