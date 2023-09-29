@@ -40,12 +40,22 @@ namespace AppHotel.ApplicationService.Services
 
         public async Task<List<BookingDetailDTO>> GetDetail(string? idBooking)
         {
-            List<Booking> listBooking = await _baseRepository.EmergencyContact(idBooking);
+            List<Booking> listBooking = await _baseRepository.GetDetail(idBooking);
             if (listBooking.Count == 0)
                 throw new NotFoundApplicationException("No existe ninguna reserva");
 
             List<BookingDetailDTO> listBookingDetailtDTO = _mapper.Map<List<BookingDetailDTO>>(listBooking);
             return listBookingDetailtDTO;
+        }
+
+        public async Task<List<BookingAvailableOutDTO>> GetAvailableBookings(BookingAvailableInDTO bookingAvailableInDTO)
+        {
+
+            List<BookingAvailableOutDTO> ListBookingAvailable = await _baseRepository.GetAvailableBookings(bookingAvailableInDTO);
+            if(ListBookingAvailable.Count == 0)
+                throw new NotFoundApplicationException("No hay habitaciones para reservas en esta fecha");
+
+            return ListBookingAvailable;
         }
     }
 }

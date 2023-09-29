@@ -13,11 +13,15 @@ namespace AppHotel.Api.Controllers
     {
         private readonly IBookingService _bookingService;
         private readonly IValidator<BookingInDTO> _validator;
+        private readonly IValidator<BookingAvailableInDTO> _validatorAvailable;
 
-        public BookingController(IBookingService bookingService, IValidator<BookingInDTO> validator)
+        public BookingController(IBookingService bookingService,
+                                IValidator<BookingInDTO> validator,
+                                IValidator<BookingAvailableInDTO> validatorAvailable)
         {
             _bookingService = bookingService;
             _validator = validator;
+            _validatorAvailable = validatorAvailable;
         }
 
         [HttpPost]
@@ -52,6 +56,21 @@ namespace AppHotel.Api.Controllers
         public async Task<IActionResult> GetByIdBooking(string? idBooking)
         {
             List<BookingDetailDTO> result = await _bookingService.GetDetail(idBooking);
+            return Ok(result); ;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Route("byAvailability")]
+        public async Task<IActionResult> GetAvailableBookings([FromQuery] BookingAvailableInDTO bookingAvailableInDTO)
+        {
+            ValidationResult validation = await _validatorAvailable.ValidateAsync(bookingAvailableInDTO);
+            if (!validation.IsValid)
+                throw new BadRequestApplicationExeption(validation.ToString());
+
+            List<BookingAvailableOutDTO> result = await _bookingService.GetAvailableBookings(bookingAvailableInDTO);
             return Ok(result); ;
         }
     }

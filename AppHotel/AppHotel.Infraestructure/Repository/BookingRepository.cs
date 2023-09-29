@@ -1,4 +1,5 @@
-﻿using AppHotel.Domain.Entities;
+﻿using AppHotel.Domain.DTOs;
+using AppHotel.Domain.Entities;
 using AppHotel.Domain.RepositoryContracts;
 using AppHotel.Infraestructure.Configuration;
 using MongoDB.Driver;
@@ -10,7 +11,6 @@ namespace AppHotel.Infraestructure.Repository
     {
         private readonly IBaseRepository<Room> _baseRepositoryRoom;
         private readonly IBaseRepository<Hotel> _baseRepositoryHotel;
-
         private readonly IBaseRepository<Guest> _baseRepositoryGuest;
         private readonly IBaseRepository<EmergencyContact> _baseRepositoryEmergencyContact;
 
@@ -56,7 +56,7 @@ namespace AppHotel.Infraestructure.Repository
             return booking;
         }
 
-        public async Task<List<Booking>> EmergencyContact(string? idBooking)
+        public async Task<List<Booking>> GetDetail(string? idBooking)
         {
             var bookingAux = (await this.GetAll()
                 .Where(x => x.Id == idBooking)
@@ -100,6 +100,15 @@ namespace AppHotel.Infraestructure.Repository
                 .ToList();
 
             return booking;
+        }
+
+        public async Task<List<BookingAvailableOutDTO>> GetAvailableBookings(BookingAvailableInDTO bookingAvailableInDTO)
+        {
+            List<BookingAvailableOutDTO> bookingAvailableOutDTO = new List<BookingAvailableOutDTO>();
+
+            //var 
+
+            return bookingAvailableOutDTO;
         }
     }
 }

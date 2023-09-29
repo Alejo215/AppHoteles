@@ -1,4 +1,5 @@
-﻿using AppHotel.Domain.Entities;
+﻿using AppHotel.Domain.DTOs;
+using AppHotel.Domain.Entities;
 
 namespace AppHotel.Domain.RepositoryContracts
 {
@@ -6,6 +7,8 @@ namespace AppHotel.Domain.RepositoryContracts
     {
         Task<List<Booking>> GetBookingByIdHotel(string? idHotel);
 
-        Task<List<Booking>> EmergencyContact(string? idBooking);
+        Task<List<Booking>> GetDetail(string? idBooking);
+
+        Task<List<BookingAvailableOutDTO>> GetAvailableBookings(BookingAvailableInDTO bookingAvailableInDTO);
     }
 }

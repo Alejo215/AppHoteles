@@ -24,12 +24,10 @@ namespace AppHotel.Domain.Entities
         [BsonElement("typeRoom")]
         public string TypeRoom { get; set; } = null!;
 
-        [BsonElement("location")]
-        public string Location { get; set; } = null!;
-
         [BsonElement("numberPeople")]
         public int NumberPeople { get; set; }
 
+        [BsonIgnoreIfNull]
         public Hotel? Hotel { get; set; }
     }
 }

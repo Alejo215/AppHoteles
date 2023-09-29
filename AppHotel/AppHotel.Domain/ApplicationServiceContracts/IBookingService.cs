@@ -1,5 +1,4 @@
 ﻿using AppHotel.Domain.DTOs;
-using AppHotel.Domain.Entities;
 
 namespace AppHotel.Domain.ApplicationServiceContracts
 {
@@ -10,5 +9,7 @@ namespace AppHotel.Domain.ApplicationServiceContracts
         Task<List<BookingOutDTO>> GetBooking(string? idHotel);
 
         Task<List<BookingDetailDTO>> GetDetail(string? idBooking);
+
+        Task<List<BookingAvailableOutDTO>> GetAvailableBookings(BookingAvailableInDTO bookingAvailableInDTO);
     }
 }
