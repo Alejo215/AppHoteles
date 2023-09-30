@@ -1,4 +1,6 @@
-﻿namespace AppHotel.Domain.DTOs
+﻿using AppHotel.Domain.Entities;
+
+namespace AppHotel.Domain.DTOs
 {
     public class BookingInDTO
     {
@@ -7,5 +9,7 @@
         public int NumberPeople { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public List<GuestInDTO>? ListGuest { get; set; }
+        public EmergencyContactInDTO? EmergencyContact { get; set; }
     }
 }

@@ -27,7 +27,7 @@ namespace AppHotel.Domain.Entities
         [BsonElement("numberPeople")]
         public int NumberPeople { get; set; }
 
-        [BsonIgnoreIfNull]
+        [BsonIgnore]
         public Hotel? Hotel { get; set; }
     }
 }

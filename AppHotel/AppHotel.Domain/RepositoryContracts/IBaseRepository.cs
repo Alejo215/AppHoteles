@@ -7,6 +7,8 @@ namespace AppHotel.Domain.RepositoryContracts
     {
         Task AddAsync(T entity);
 
+        Task AddManyAsync(List<T> entity);
+
         Task UpdateAsync(T entity, string? id = null);
 
         Task<List<T>> GetByAsync(Expression<Func<T, bool>> filter);

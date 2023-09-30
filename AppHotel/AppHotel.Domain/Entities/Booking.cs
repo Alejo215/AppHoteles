@@ -21,13 +21,13 @@ namespace AppHotel.Domain.Entities
         [BsonElement("endDate")]
         public DateTime EndDate { get; set; }
 
-        [BsonIgnoreIfNull]
+        [BsonIgnore]
         public Room? Room { get; set; }
 
-        [BsonIgnoreIfNull]
+        [BsonIgnore]
         public List<Guest>? ListGuest { get; set; }
 
-        [BsonIgnoreIfNull]
+        [BsonIgnore]
         public EmergencyContact? EmergencyContact { get; set; }
     }
 }

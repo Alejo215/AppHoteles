@@ -4,18 +4,27 @@ using AppHotel.Domain.DTOs;
 using AppHotel.Domain.Entities;
 using AppHotel.Domain.RepositoryContracts;
 using AutoMapper;
+using System.Transactions;
 
 namespace AppHotel.ApplicationService.Services
 {
     public class BookingService : IBookingService
     {
         private readonly IBookingRepository _baseRepository;
+        private readonly IBaseRepository<Guest> _guestRepository;
+        private readonly IBaseRepository<EmergencyContact> _emergencyContactRepository;
 
         private readonly IMapper _mapper;
 
-        public BookingService(IBookingRepository baseRepository, IMapper mapper)
+        public BookingService(
+            IBookingRepository baseRepository,
+            IBaseRepository<Guest> guestRepository,
+            IBaseRepository<EmergencyContact> emergencyContactRepository,
+            IMapper mapper)
         {
             _baseRepository = baseRepository;
+            _guestRepository = guestRepository;
+            _emergencyContactRepository = emergencyContactRepository;
             _mapper = mapper;
 
         }
@@ -25,6 +34,17 @@ namespace AppHotel.ApplicationService.Services
             Booking booking = _mapper.Map<Booking>(bookingInDTO);
             await _baseRepository.AddAsync(booking);
             BookingOutDTO bookingOutDTO = _mapper.Map<BookingOutDTO>(booking);
+
+            List<Guest> listGuest = _mapper.Map<List<Guest>>(bookingInDTO.ListGuest);
+            listGuest = listGuest.Select(x => { x.BookingId = booking.Id; return x; }).ToList();
+            Task addListGuest = _guestRepository.AddManyAsync(listGuest);
+
+            EmergencyContact emergencyContact = _mapper.Map<EmergencyContact>(bookingInDTO.EmergencyContact);
+            emergencyContact.BookingId = booking.Id;
+            Task addEmergencyContact = _emergencyContactRepository.AddAsync(emergencyContact);
+
+            await Task.WhenAll(addListGuest, addEmergencyContact);
+
             return bookingOutDTO;
         }
 

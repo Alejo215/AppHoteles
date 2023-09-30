@@ -21,6 +21,11 @@ namespace AppHotel.Infraestructure.Repository
             await _entities.InsertOneAsync(entity);
         }
 
+        public async Task AddManyAsync(List<T> entity)
+        {
+            await _entities.InsertManyAsync(entity);
+        }
+
         public async Task<List<T>> GetByAsync(Expression<Func<T, bool>> filter)
         {
             return (await _entities.FindAsync(filter)).ToList();
