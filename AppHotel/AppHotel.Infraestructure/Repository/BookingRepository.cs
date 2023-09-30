@@ -110,9 +110,46 @@ namespace AppHotel.Infraestructure.Repository
 
         public async Task<List<BookingAvailableOutDTO>> GetAvailableBookings(BookingAvailableInDTO bookingAvailableInDTO)
         {
-            List<BookingAvailableOutDTO> bookingAvailableOutDTO = new List<BookingAvailableOutDTO>();
+            List<BookingAvailableOutDTO> bookingAvailableOutDTO = (await _baseRepositoryHotel.GetAll()
+                .Join(_baseRepositoryRoom.GetAll(),
+                    hotel => hotel.Id,
+                    room => room.HotelId,
+                    (hotel, room) => new
+                    {
+                        room,
+                        hotel
+                    })
+                .Join(this.GetAll(),
+                    room => room.room.Id,
+                    booking => booking.RoomId,
+                    (room, booking) => new
+                    {
+                        room,
+                        booking
+                    })
+                .Where(x =>
+                    (bookingAvailableInDTO.EndDate <= x.booking.StartDate ||
+                    bookingAvailableInDTO.StartDate >= x.booking.EndDate) &&//Le falta ser left y la condicion de las fechas por room
+                    bookingAvailableInDTO.Location  == x.room.hotel.Location &&
+                    bookingAvailableInDTO.NumberPeople <= x.room.room.NumberPeople)
+                .ToListAsync())
+                    .Select(x => {
+                        x.booking.Room = x.room.room;
+                        x.booking.Room.Hotel = x.room.hotel;
 
-            //var 
+                        return new BookingAvailableOutDTO
+                        {
+                            RoomId = x.booking.RoomId,
+                            Number = x.booking.Room.Number,
+                            Cost = x.booking.Room.Cost,
+                            Tax = x.booking.Room.Tax,
+                            TypeRoom = x.booking.Room.TypeRoom,
+                            NumberMaxPeople = x.booking.Room.NumberPeople,
+                            Location = x.booking.Room.Hotel.Location,
+                            StartDate = x.booking.StartDate,
+                            EndDate = x.booking.EndDate,
+                        };
+                    }).ToList();
 
             return bookingAvailableOutDTO;
         }

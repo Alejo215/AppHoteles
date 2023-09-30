@@ -13,7 +13,7 @@ namespace AppHotel.Domain.Entities
         public string Description { get; set; } = null!;
 
         [BsonElement("number")]
-        public int Number { get; set; }
+        public int NumberPeople { get; set; }
 
         [BsonElement("startDate")]
         public DateTime StartDate { get; set; }
