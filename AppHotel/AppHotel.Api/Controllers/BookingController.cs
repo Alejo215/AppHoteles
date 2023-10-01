@@ -40,7 +40,7 @@ namespace AppHotel.Api.Controllers
             {
                 ValidationResult validationGuest = await _validatorGuest.ValidateAsync(guestInDTO);
                 if (!validationGuest.IsValid)
-                    throw new BadRequestApplicationExeption(validation.ToString());
+                    throw new BadRequestApplicationExeption(validationGuest.ToString());
             }
 
             BookingOutDTO result = await _bookingService.CreateBooking(bookingInDTO);
