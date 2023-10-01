@@ -10,6 +10,7 @@ namespace AppHotel.ApplicationService.Profiles
         {
             CreateMap<HotelInDTO, Hotel>()
                 .ForMember(dest => dest.Available, origen => origen.MapFrom(map => true));
+            CreateMap<HotelInUpdateDTO, Hotel>();
             CreateMap<Hotel, HotelOutDTO>();
         }
     }
