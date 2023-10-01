@@ -12,6 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<Database>(builder.Configuration.GetSection("Database"));
+builder.Services.Configure<Notification>(builder.Configuration.GetSection("Notification"));
+
 builder.Services.AddServices();
 
 builder.Services.AddAutoMapper(Assembly.Load("AppHotel.ApplicationService"));

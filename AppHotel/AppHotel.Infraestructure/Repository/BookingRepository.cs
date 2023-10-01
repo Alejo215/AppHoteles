@@ -2,6 +2,7 @@
 using AppHotel.Domain.Entities;
 using AppHotel.Domain.RepositoryContracts;
 using AppHotel.Infraestructure.Configuration;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -110,7 +111,8 @@ namespace AppHotel.Infraestructure.Repository
 
         public async Task<List<BookingAvailableOutDTO>> GetAvailableBookings(BookingAvailableInDTO bookingAvailableInDTO)
         {
-            List<BookingAvailableOutDTO> bookingAvailableOutDTO = (await _baseRepositoryHotel.GetAll()
+            var taskBookingAvailableAux = _baseRepositoryHotel.GetAll()
+                .Where(hotel => hotel.Available && bookingAvailableInDTO.Location == hotel.Location)
                 .Join(_baseRepositoryRoom.GetAll(),
                     hotel => hotel.Id,
                     room => room.HotelId,
@@ -119,6 +121,20 @@ namespace AppHotel.Infraestructure.Repository
                         room,
                         hotel
                     })
+                .Where(x => x.room.Available && bookingAvailableInDTO.NumberPeople <= x.room.NumberPeople)
+                .ToListAsync();
+
+            var taskBookingIds = _baseRepositoryHotel.GetAll()
+                .Where(hotel => hotel.Available && bookingAvailableInDTO.Location == hotel.Location)
+                .Join(_baseRepositoryRoom.GetAll(),
+                    hotel => hotel.Id,
+                    room => room.HotelId,
+                    (hotel, room) => new
+                    {
+                        room,
+                        hotel
+                    })
+                .Where(x => x.room.Available && bookingAvailableInDTO.NumberPeople <= x.room.NumberPeople)
                 .Join(this.GetAll(),
                     room => room.room.Id,
                     booking => booking.RoomId,
@@ -127,29 +143,35 @@ namespace AppHotel.Infraestructure.Repository
                         room,
                         booking
                     })
-                .Where(x =>
-                    (bookingAvailableInDTO.EndDate <= x.booking.StartDate ||
-                    bookingAvailableInDTO.StartDate >= x.booking.EndDate) &&//Le falta ser left y la condicion de las fechas por room
-                    bookingAvailableInDTO.Location  == x.room.hotel.Location &&
-                    bookingAvailableInDTO.NumberPeople <= x.room.room.NumberPeople)
-                .ToListAsync())
-                    .Select(x => {
-                        x.booking.Room = x.room.room;
-                        x.booking.Room.Hotel = x.room.hotel;
+                .Where(booking =>
+                    (bookingAvailableInDTO.StartDate >= booking.booking.StartDate && bookingAvailableInDTO.StartDate <= booking.booking.EndDate) ||
+                    (bookingAvailableInDTO.EndDate >= booking.booking.StartDate && bookingAvailableInDTO.EndDate <= booking.booking.EndDate) ||
+                    (bookingAvailableInDTO.StartDate <= booking.booking.StartDate && bookingAvailableInDTO.EndDate >= booking.booking.EndDate))
+                .Select(booking => booking.booking.RoomId)
+                .ToListAsync();
 
-                        return new BookingAvailableOutDTO
-                        {
-                            RoomId = x.booking.RoomId,
-                            Number = x.booking.Room.Number,
-                            Cost = x.booking.Room.Cost,
-                            Tax = x.booking.Room.Tax,
-                            TypeRoom = x.booking.Room.TypeRoom,
-                            NumberMaxPeople = x.booking.Room.NumberPeople,
-                            Location = x.booking.Room.Hotel.Location,
-                            StartDate = x.booking.StartDate,
-                            EndDate = x.booking.EndDate,
-                        };
-                    }).ToList();
+            await Task.WhenAll(taskBookingAvailableAux, taskBookingIds);
+
+            var bookingAvailableAuxResult = taskBookingAvailableAux.Result;
+            var bookingIds = taskBookingIds.Result;
+
+            var bookingAvailableAux = bookingAvailableAuxResult.Select(x =>
+            {
+                return new BookingAvailableOutDTO
+                {
+                    RoomId = x.room.Id,
+                    Number = x.room.Number,
+                    Cost = x.room.Cost,
+                    Tax = x.room.Tax,
+                    TypeRoom = x.room.TypeRoom,
+                    NumberMaxPeople = x.room.NumberPeople,
+                    Location = x.hotel.Location,
+                    StartDate = bookingAvailableInDTO.StartDate,
+                    EndDate = bookingAvailableInDTO.EndDate,
+                };
+            }).ToList();
+
+            List<BookingAvailableOutDTO> bookingAvailableOutDTO = bookingAvailableAux.Where(x => !bookingIds.Contains(x.RoomId)).ToList();
 
             return bookingAvailableOutDTO;
         }

@@ -13,14 +13,17 @@ namespace AppHotel.Api.Controllers
     {
         private readonly IBookingService _bookingService;
         private readonly IValidator<BookingInDTO> _validator;
+        private readonly IValidator<GuestInDTO> _validatorGuest;
         private readonly IValidator<BookingAvailableInDTO> _validatorAvailable;
 
         public BookingController(IBookingService bookingService,
                                 IValidator<BookingInDTO> validator,
+                                IValidator<GuestInDTO> validatorGuest,
                                 IValidator<BookingAvailableInDTO> validatorAvailable)
         {
             _bookingService = bookingService;
             _validator = validator;
+            _validatorGuest = validatorGuest;
             _validatorAvailable = validatorAvailable;
         }
 
@@ -32,6 +35,13 @@ namespace AppHotel.Api.Controllers
             ValidationResult validation = await _validator.ValidateAsync(bookingInDTO);
             if (!validation.IsValid)
                 throw new BadRequestApplicationExeption(validation.ToString());
+
+            foreach(var guestInDTO  in bookingInDTO.ListGuest!)
+            {
+                ValidationResult validationGuest = await _validatorGuest.ValidateAsync(guestInDTO);
+                if (!validationGuest.IsValid)
+                    throw new BadRequestApplicationExeption(validation.ToString());
+            }
 
             BookingOutDTO result = await _bookingService.CreateBooking(bookingInDTO);
             return Ok(result);

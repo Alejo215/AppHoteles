@@ -4,7 +4,6 @@ using AppHotel.Domain.DTOs;
 using AppHotel.Domain.Entities;
 using AppHotel.Domain.RepositoryContracts;
 using AutoMapper;
-using System.Transactions;
 
 namespace AppHotel.ApplicationService.Services
 {
@@ -16,21 +15,25 @@ namespace AppHotel.ApplicationService.Services
 
         private readonly IMapper _mapper;
 
+        private readonly INotifications _notifications;
+
         public BookingService(
             IBookingRepository baseRepository,
             IBaseRepository<Guest> guestRepository,
             IBaseRepository<EmergencyContact> emergencyContactRepository,
-            IMapper mapper)
+            IMapper mapper,
+            INotifications notifications)
         {
             _baseRepository = baseRepository;
             _guestRepository = guestRepository;
             _emergencyContactRepository = emergencyContactRepository;
             _mapper = mapper;
-
+            _notifications = notifications;
         }
 
         public async Task<BookingOutDTO> CreateBooking(BookingInDTO bookingInDTO)
         {
+            //Meter codigo en una transacción - Ini
             Booking booking = _mapper.Map<Booking>(bookingInDTO);
             await _baseRepository.AddAsync(booking);
             BookingOutDTO bookingOutDTO = _mapper.Map<BookingOutDTO>(booking);
@@ -45,6 +48,8 @@ namespace AppHotel.ApplicationService.Services
 
             await Task.WhenAll(addListGuest, addEmergencyContact);
 
+            _notifications.EmailNotification(listGuest.Select(x => x.Email));
+            //Meter codigo en una transacción - Fin
             return bookingOutDTO;
         }
 
@@ -73,7 +78,7 @@ namespace AppHotel.ApplicationService.Services
 
             List<BookingAvailableOutDTO> ListBookingAvailable = await _baseRepository.GetAvailableBookings(bookingAvailableInDTO);
             if(ListBookingAvailable.Count == 0)
-                throw new NotFoundApplicationException("No hay habitaciones para reservas en esta fecha");
+                throw new NotFoundApplicationException("No hay habitaciones para reservas en esta fecha y/o esa cantidad de personas");
 
             return ListBookingAvailable;
         }
